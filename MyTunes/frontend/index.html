@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MyTune - Free Social Music Streaming</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+<main class="auth-wrapper">
+
+    <!-- LEFT SIDE -->
+    <section class="auth-hero">
+        <h1>🎵 MyTune</h1>
+        <p>Ad-Free Social Music Streaming</p>
+        <span>Listen together. Share playlists. Connect with friends.</span>
+    </section>
+
+    <!-- RIGHT SIDE -->
+    <section class="auth-card">
+
+        <div class="form-switch">
+            <button id="loginToggle" class="active">Login</button>
+            <button id="registerToggle">Register</button>
+        </div>
+
+        <!-- LOGIN -->
+        <form id="loginForm" class="form active-form">
+
+            <h2>Welcome Back</h2>
+
+            <div class="input-field">
+                <input type="email" id="loginEmail" required>
+                <label>Email</label>
+            </div>
+
+            <div class="input-field password-field">
+                <input type="password" id="loginPassword" required>
+                <label>Password</label>
+                <i class="fa-solid fa-eye toggle-password"></i>
+            </div>
+
+            <div class="remember-row">
+                <label>
+                    <input type="checkbox" id="rememberMe"> Remember Me
+                </label>
+            </div>
+
+            <button type="submit" class="primary-btn">Login</button>
+
+        </form>
+
+        <!-- REGISTER -->
+        <form id="registerForm" class="form">
+
+            <h2>Create Account</h2>
+
+            <div class="input-field">
+                <input type="text" id="registerName" required>
+                <label>Username</label>
+            </div>
+
+            <div class="input-field">
+                <input type="email" id="registerEmail" required>
+                <label>Email</label>
+            </div>
+
+            <div class="input-field password-field">
+                <input type="password" id="registerPassword" required>
+                <label>Password</label>
+                <i class="fa-solid fa-eye toggle-password"></i>
+            </div>
+
+            <div class="input-field password-field">
+                <input type="password" id="confirmPassword" required>
+                <label>Confirm Password</label>
+                <i class="fa-solid fa-eye toggle-password"></i>
+            </div>
+
+            <button type="submit" class="primary-btn">Register</button>
+
+        </form>
+
+    </section>
+
+</main>
+
+<script src="js/auth.js"></script>
+</body>
+</html>

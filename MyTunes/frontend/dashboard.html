@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MyTune – Music for Everyone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+<div class="app-shell" id="appShell">
+
+  <!-- ========== SIDEBAR ========== -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">🎵 MyTune</div>
+
+    <ul class="sidebar-nav">
+      <li class="nav-item active" data-page="home">
+        <i class="fa fa-home"></i> Home
+      </li>
+      <li class="nav-item" data-page="search">
+        <i class="fa fa-search"></i> Search
+      </li>
+      <li class="nav-item" data-page="library">
+        <i class="fa fa-book"></i> Your Library
+      </li>
+    </ul>
+
+    <div class="sidebar-divider"></div>
+
+    <ul class="sidebar-nav">
+      <li class="nav-item" data-page="liked">
+        <i class="fa fa-heart"></i> Liked Songs
+      </li>
+      <li class="nav-item" data-page="friends">
+        <i class="fa fa-user-friends"></i> Friends
+      </li>
+      <li class="nav-item" data-page="listen-together">
+        <i class="fa fa-headphones"></i> Listen Together
+      </li>
+    </ul>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-library">
+      <div class="sidebar-library-header">
+        <span>Playlists</span>
+        <button id="createPlaylistSidebarBtn" title="Create playlist">
+          <i class="fa fa-plus"></i>
+        </button>
+      </div>
+      <ul id="sidebarPlaylists">
+        <!-- Dynamic -->
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <div class="main-content">
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="nav-arrows">
+        <button onclick="history.back()"><i class="fa fa-chevron-left"></i></button>
+        <button onclick="history.forward()"><i class="fa fa-chevron-right"></i></button>
+      </div>
+
+      <div class="search-box">
+        <i class="fa fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Search songs, artists, playlists…">
+      </div>
+
+      <div class="top-bar-right">
+        <button class="ctrl-btn" id="queueToggleBtn" title="Queue">
+          <i class="fa fa-list-ul"></i>
+        </button>
+        <button class="ctrl-btn" id="friendsPanelBtn" title="Friends Activity">
+          <i class="fa fa-users"></i>
+        </button>
+
+        <div class="user-menu" id="userMenuBtn">
+          <div class="user-avatar" id="userAvatarTop">U</div>
+          <span id="userNameTop">User</span>
+          <i class="fa fa-chevron-down"></i>
+
+          <div class="profile-dropdown" id="profileDropdown">
+            <a href="#" data-page="profile"><i class="fa fa-user"></i> Profile</a>
+            <a href="#" data-page="settings"><i class="fa fa-cog"></i> Settings</a>
+            <hr>
+            <button id="logoutBtn"><i class="fa fa-sign-out-alt"></i> Log out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== HOME PAGE ===== -->
+    <div class="page active" id="page-home">
+      <div class="page-header">
+        <h1 id="greetingText">Good Evening</h1>
+        <p>Discover your next favourite song</p>
+      </div>
+      <div class="page-body">
+
+        <!-- Trending -->
+        <div class="section">
+          <div class="section-header">
+            <h2>Trending Now</h2>
+            <a href="#" id="seeAllTrending">See all</a>
+          </div>
+          <div class="cards-grid" id="trendingGrid">
+            <!-- skeleton -->
+            <div class="skeleton skeleton-card"></div>
+            <div class="skeleton skeleton-card"></div>
+            <div class="skeleton skeleton-card"></div>
+            <div class="skeleton skeleton-card"></div>
+            <div class="skeleton skeleton-card"></div>
+          </div>
+        </div>
+
+        <!-- Browse by Mood -->
+        <div class="section">
+          <div class="section-header">
+            <h2>Browse by Mood</h2>
+          </div>
+          <div class="mood-grid" id="moodGrid"></div>
+        </div>
+
+        <!-- Your Playlists -->
+        <div class="section" id="userPlaylistsSection">
+          <div class="section-header">
+            <h2>Your Playlists</h2>
+            <a href="#" id="createPlaylistLink">+ Create</a>
+          </div>
+          <div class="cards-grid" id="playlistsGrid">
+            <div class="empty-state">
+              <i class="fa fa-list"></i>
+              <h3>No playlists yet</h3>
+              <p>Create your first playlist</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== SEARCH PAGE ===== -->
+    <div class="page" id="page-search">
+      <div class="page-header">
+        <h1>Search Results</h1>
+      </div>
+      <div class="page-body">
+        <div class="section" id="searchResultsSection">
+          <div class="empty-state" id="searchEmptyState">
+            <i class="fa fa-search"></i>
+            <h3>Start typing to search</h3>
+            <p>Search for songs, artists or albums</p>
+          </div>
+          <div id="searchResultsGrid" class="cards-grid" style="display:none;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== LIBRARY PAGE ===== -->
+    <div class="page" id="page-library">
+      <div class="page-header purple">
+        <h1>Your Library</h1>
+        <p>All your music in one place</p>
+      </div>
+      <div class="page-body">
+        <div class="section">
+          <div class="section-header"><h2>Playlists</h2><a href="#" id="createPlaylistBtn">+ Create</a></div>
+          <div class="cards-grid" id="libraryPlaylistsGrid"></div>
+        </div>
+        <div class="section">
+          <div class="section-header"><h2>Recently Played</h2></div>
+          <div class="cards-grid" id="recentlyPlayedGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== LIKED SONGS PAGE ===== -->
+    <div class="page" id="page-liked">
+      <div class="page-header green">
+        <h1><i class="fa fa-heart"></i> Liked Songs</h1>
+        <p id="likedCountText">0 songs</p>
+      </div>
+      <div class="page-body">
+        <div class="playlist-actions">
+          <button class="play-big-btn" id="playLikedBtn"><i class="fa fa-play"></i></button>
+          <button class="ctrl-btn" id="shuffleLikedBtn" title="Shuffle"><i class="fa fa-random"></i></button>
+        </div>
+        <table class="song-list" id="likedSongsList">
+          <thead>
+            <tr>
+              <th style="width:40px;">#</th>
+              <th>Title</th>
+              <th>Artist</th>
+              <th style="text-align:right;"><i class="fa fa-clock"></i></th>
+              <th style="width:40px;"></th>
+            </tr>
+          </thead>
+          <tbody id="likedSongsBody"></tbody>
+        </table>
+        <div class="empty-state hidden" id="likedEmptyState">
+          <i class="far fa-heart"></i>
+          <h3>Songs you like will appear here</h3>
+          <p>Click the heart on any song to save it here</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== FRIENDS PAGE ===== -->
+    <div class="page" id="page-friends">
+      <div class="page-header teal">
+        <h1>Friends</h1>
+        <p>Connect and share music</p>
+      </div>
+      <div class="page-body">
+        <!-- Add friend -->
+        <div class="section">
+          <div class="section-header"><h2>Add Friend</h2></div>
+          <div style="display:flex;gap:10px;max-width:400px;">
+            <input type="text" class="modal-input" id="friendSearchInput" placeholder="Search by username or email…" style="margin:0;flex:1;">
+            <button class="btn-primary" id="searchFriendBtn" style="white-space:nowrap;">Search</button>
+          </div>
+          <div id="friendSearchResults" style="margin-top:16px;"></div>
+        </div>
+        <!-- Pending requests -->
+        <div class="section" id="pendingSection">
+          <div class="section-header"><h2>Pending Requests</h2></div>
+          <div id="pendingList"></div>
+        </div>
+        <!-- Friends list -->
+        <div class="section">
+          <div class="section-header"><h2>Your Friends</h2></div>
+          <div id="friendsList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== LISTEN TOGETHER PAGE ===== -->
+    <div class="page" id="page-listen-together">
+      <div class="page-header">
+        <h1>Listen Together</h1>
+        <p>Create or join a listening session with friends</p>
+      </div>
+      <div class="page-body">
+        <div class="section">
+          <div class="section-header"><h2>Active Sessions</h2></div>
+          <div id="activeSessionsList">
+            <div class="empty-state" id="noSessionsState">
+              <i class="fa fa-headphones"></i>
+              <h3>No active sessions</h3>
+              <p>Create one to listen with friends</p>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:24px;">
+          <button class="btn-primary" id="createSessionBtn" style="padding:14px 32px;font-size:1rem;">
+            <i class="fa fa-plus"></i> Create Session
+          </button>
+        </div>
+        <!-- Active session panel -->
+        <div id="activeSessionPanel" class="hidden" style="margin-top:32px;">
+          <div style="background:var(--bg-elevated);border-radius:12px;padding:24px;border:1px solid var(--border);">
+            <h3 id="sessionName" style="margin-bottom:8px;">Session Name</h3>
+            <p style="color:var(--text-sub);font-size:0.85rem;margin-bottom:16px;">Code: <strong id="sessionCode" style="color:var(--accent);font-size:1rem;letter-spacing:2px;"></strong></p>
+            <p style="color:var(--text-sub);font-size:0.85rem;margin-bottom:16px;"><i class="fa fa-users"></i> <span id="sessionMembersCount">1</span> listening</p>
+            <button class="btn-ghost" id="leaveSessionBtn"><i class="fa fa-sign-out-alt"></i> Leave Session</button>
+          </div>
+          <div style="margin-top:16px;">
+            <h4 style="color:var(--text-sub);font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Members</h4>
+            <div id="sessionMembersList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MOOD SONGS PAGE ===== -->
+    <div class="page" id="page-mood-songs">
+      <div class="playlist-hero" id="moodSongsHero">
+        <div class="playlist-hero-cover placeholder" id="moodSongsCover" style="font-size:3rem;display:flex;align-items:center;justify-content:center;"></div>
+        <div class="playlist-hero-info">
+          <div class="playlist-hero-type">Mood Playlist</div>
+          <h1 class="playlist-hero-title" id="moodSongsTitle">Mood</h1>
+          <div class="playlist-hero-meta" id="moodSongsMeta">0 songs</div>
+        </div>
+      </div>
+      <div class="playlist-actions">
+        <button class="play-big-btn" id="playMoodBtn"><i class="fa fa-play"></i></button>
+        <button class="ctrl-btn" id="shuffleMoodBtn" title="Shuffle"><i class="fa fa-random"></i></button>
+        <button class="ctrl-btn" id="backFromMoodBtn" title="Back to Home" onclick="Dashboard.navigateTo('home')"><i class="fa fa-arrow-left"></i></button>
+      </div>
+      <div style="padding:0 24px 40px;">
+        <table class="song-list">
+          <thead>
+            <tr>
+              <th style="width:40px;">#</th>
+              <th>Title</th>
+              <th>Artist</th>
+              <th style="text-align:right;"><i class="fa fa-clock"></i></th>
+              <th style="width:40px;"></th>
+            </tr>
+          </thead>
+          <tbody id="moodSongsBody"></tbody>
+        </table>
+        <div class="empty-state hidden" id="moodSongsEmpty">
+          <i class="fa fa-music"></i>
+          <h3>No songs found for this mood</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PLAYLIST DETAIL PAGE ===== -->
+    <div class="page" id="page-playlist-detail">
+      <div class="playlist-hero" id="playlistHero">
+        <div class="playlist-hero-cover placeholder" id="playlistCoverLg">🎵</div>
+        <div class="playlist-hero-info">
+          <div class="playlist-hero-type">Playlist</div>
+          <h1 class="playlist-hero-title" id="playlistDetailName">Playlist Name</h1>
+          <div class="playlist-hero-meta" id="playlistDetailMeta">0 songs</div>
+        </div>
+      </div>
+      <div class="playlist-actions">
+        <button class="play-big-btn" id="playPlaylistBtn"><i class="fa fa-play"></i></button>
+        <button class="ctrl-btn" id="shufflePlaylistBtn" title="Shuffle"><i class="fa fa-random"></i></button>
+        <button class="ctrl-btn" id="editPlaylistBtn" title="Edit playlist"><i class="fa fa-edit"></i></button>
+        <button class="ctrl-btn" id="deletePlaylistBtn" title="Delete playlist" style="color:#e53e3e;"><i class="fa fa-trash"></i></button>
+      </div>
+      <div style="padding:0 24px 40px;">
+        <table class="song-list">
+          <thead>
+            <tr>
+              <th style="width:40px;">#</th>
+              <th>Title</th>
+              <th>Artist</th>
+              <th style="text-align:right;"><i class="fa fa-clock"></i></th>
+              <th style="width:40px;"></th>
+            </tr>
+          </thead>
+          <tbody id="playlistSongsBody"></tbody>
+        </table>
+        <div class="empty-state hidden" id="playlistEmptyState">
+          <i class="fa fa-music"></i>
+          <h3>This playlist is empty</h3>
+          <p>Search for songs and add them here</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PROFILE PAGE ===== -->
+    <div class="page" id="page-profile">
+      <div class="profile-hero">
+        <div class="profile-avatar-lg" id="profileAvatarLg">U</div>
+        <div class="profile-info">
+          <div style="font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-sub);margin-bottom:8px;">Profile</div>
+          <div class="profile-name" id="profileDisplayName">Username</div>
+          <div class="profile-stats" style="margin-top:10px;">
+            <span id="profilePlaysCount">0</span> plays &nbsp;·&nbsp;
+            <span id="profilePlaylistsCount">0</span> playlists &nbsp;·&nbsp;
+            <span id="profileFriendsCount">0</span> friends
+          </div>
+        </div>
+      </div>
+      <div style="padding:16px 24px;">
+        <button class="btn-ghost" id="editProfileBtn"><i class="fa fa-edit"></i> Edit Profile</button>
+      </div>
+      <div style="padding:0 24px 40px;">
+        <div class="section">
+          <div class="section-header"><h2>Top Tracks</h2></div>
+          <div id="profileTopTracks"></div>
+        </div>
+        <div class="section">
+          <div class="section-header"><h2>Public Playlists</h2></div>
+          <div class="cards-grid" id="profilePlaylists"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end .main-content -->
+
+  <!-- ========== RIGHT PANEL ========== -->
+  <aside class="right-panel" id="rightPanel" style="display:none;">
+    <div class="panel-tabs">
+      <button class="panel-tab active" data-panel="queue">Queue</button>
+      <button class="panel-tab" data-panel="friends-activity">Friends</button>
+    </div>
+
+    <!-- Queue -->
+    <div class="panel-section active" id="panelQueue">
+      <h4>Now Playing</h4>
+      <div id="queueNowPlaying" style="margin-bottom:16px;"></div>
+      <h4>Next Up</h4>
+      <div id="queueList"></div>
+    </div>
+
+    <!-- Friends Activity -->
+    <div class="panel-section" id="panelFriendsActivity">
+      <h4>Friends Listening</h4>
+      <div id="friendsActivityList">
+        <div class="empty-state" style="padding:20px 0;">
+          <i class="fa fa-users" style="font-size:1.5rem;"></i>
+          <p>No friends active right now</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========== PLAYER BAR ========== -->
+  <footer class="player-bar">
+
+    <!-- Left: Now Playing -->
+    <div class="player-now-playing">
+      <img class="player-cover" id="currentCover" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='54' height='54' viewBox='0 0 54 54'%3E%3Crect width='54' height='54' fill='%23282828'/%3E%3Ctext x='27' y='35' text-anchor='middle' font-size='24' fill='%23555'%3E♪%3C/text%3E%3C/svg%3E" alt="cover">
+      <div class="player-song-info">
+        <div class="player-song-title" id="currentSong">Select a song</div>
+        <div class="player-song-artist" id="currentArtist">–</div>
+      </div>
+      <button class="player-heart" id="playerHeartBtn" title="Like">
+        <i class="far fa-heart"></i>
+      </button>
+    </div>
+
+    <!-- Center: Controls + Progress -->
+    <div class="player-center">
+      <div class="player-controls">
+        <button class="ctrl-btn" id="shuffleBtn" title="Shuffle"><i class="fa fa-random"></i></button>
+        <button class="ctrl-btn" id="prevBtn" title="Previous"><i class="fa fa-step-backward"></i></button>
+        <button class="ctrl-btn" id="playPauseBtn" title="Play"><i class="fa fa-play"></i></button>
+        <button class="ctrl-btn" id="nextBtn" title="Next"><i class="fa fa-step-forward"></i></button>
+        <button class="ctrl-btn" id="repeatBtn" title="Repeat"><i class="fa fa-redo"></i></button>
+      </div>
+      <div class="player-progress">
+        <span class="time-label" id="currentTime">0:00</span>
+        <input type="range" id="progressBar" value="0" min="0" step="1">
+        <span class="time-label" id="totalTime">0:00</span>
+      </div>
+    </div>
+
+    <!-- Right: Volume + extras -->
+    <div class="player-right">
+      <div class="vol-ctrl">
+        <i class="fa fa-volume-up" id="volumeIcon"></i>
+        <input type="range" id="volumeSlider" value="100" min="0" max="100">
+      </div>
+    </div>
+
+  </footer>
+
+</div><!-- end .app-shell -->
+
+<!-- ========== CREATE PLAYLIST MODAL ========== -->
+<div class="modal-overlay hidden" id="createPlaylistModal">
+  <div class="modal">
+    <button class="modal-close" id="closeCreatePlaylist"><i class="fa fa-times"></i></button>
+    <h2>Create Playlist</h2>
+    <input type="text" class="modal-input" id="newPlaylistName" placeholder="Playlist name…">
+    <input type="text" class="modal-input" id="newPlaylistDesc" placeholder="Description (optional)">
+    <select class="modal-input" id="newPlaylistVisibility">
+      <option value="public">Public</option>
+      <option value="friends">Friends only</option>
+      <option value="private">Private</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="cancelCreatePlaylist">Cancel</button>
+      <button class="btn-primary" id="confirmCreatePlaylist">Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== CREATE SESSION MODAL ========== -->
+<div class="modal-overlay hidden" id="createSessionModal">
+  <div class="modal">
+    <button class="modal-close" id="closeCreateSession"><i class="fa fa-times"></i></button>
+    <h2>Create Listening Session</h2>
+    <input type="text" class="modal-input" id="newSessionName" placeholder="Session name…">
+    <select class="modal-input" id="newSessionMode">
+      <option value="public">Public – anyone can join</option>
+      <option value="friends">Friends only</option>
+      <option value="private">Private – invite only</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="cancelCreateSession">Cancel</button>
+      <button class="btn-primary" id="confirmCreateSession">Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== JOIN SESSION MODAL ========== -->
+<div class="modal-overlay hidden" id="joinSessionModal">
+  <div class="modal">
+    <button class="modal-close" id="closeJoinSession"><i class="fa fa-times"></i></button>
+    <h2>Join Session</h2>
+    <input type="text" class="modal-input" id="joinSessionCode" placeholder="Enter session code…" style="letter-spacing:3px;text-transform:uppercase;">
+    <div class="modal-actions">
+      <button class="btn-ghost" id="cancelJoinSession">Cancel</button>
+      <button class="btn-primary" id="confirmJoinSession">Join</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ADD TO PLAYLIST MODAL ========== -->
+<div class="modal-overlay hidden" id="addToPlaylistModal">
+  <div class="modal">
+    <button class="modal-close" id="closeAddToPlaylist"><i class="fa fa-times"></i></button>
+    <h2>Add to Playlist</h2>
+    <div id="addToPlaylistList" style="max-height:300px;overflow-y:auto;"></div>
+  </div>
+</div>
+
+<!-- ========== CONTEXT MENU ========== -->
+<div class="context-menu" id="contextMenu">
+  <button id="ctxPlay"><i class="fa fa-play"></i> Play</button>
+  <button id="ctxLike"><i class="far fa-heart"></i> Like</button>
+  <button id="ctxAddToPlaylist"><i class="fa fa-plus"></i> Add to Playlist</button>
+  <button id="ctxAddToQueue"><i class="fa fa-list-ul"></i> Add to Queue</button>
+  <hr>
+  <button id="ctxShare"><i class="fa fa-share"></i> Share</button>
+</div>
+
+<!-- ========== TOAST CONTAINER ========== -->
+<div id="toast-container"></div>
+
+<!-- ========== SCRIPTS ========== -->
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/player.js"></script>
+<script src="js/sync.js"></script>
+<script src="js/dashboard.js"></script>
+
+</body>
+</html>

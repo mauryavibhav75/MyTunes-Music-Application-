@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Playlist – MyTune</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* Standalone playlist page reuses app-shell but without sidebar full nav */
+    .pl-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-sub);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 8px 0;
+      margin-bottom: 8px;
+      transition: color 0.2s;
+    }
+    .pl-back-btn:hover { color: var(--text-base); }
+  </style>
+</head>
+<body>
+
+<div class="app-shell" id="appShell" style="grid-template-columns: 240px 1fr;">
+
+  <!-- ===== SIDEBAR ===== -->
+  <nav class="sidebar">
+    <div class="sidebar-logo" style="cursor:pointer;" onclick="window.location.href='dashboard.html'">🎵 MyTune</div>
+
+    <ul class="sidebar-nav">
+      <li class="nav-item" onclick="window.location.href='dashboard.html'">
+        <i class="fa fa-home"></i> Home
+      </li>
+      <li class="nav-item active">
+        <i class="fa fa-list"></i> Playlists
+      </li>
+    </ul>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-library">
+      <div class="sidebar-library-header"><span>Your Playlists</span></div>
+      <ul id="sidebarPlaylists"></ul>
+    </div>
+  </nav>
+
+  <!-- ===== MAIN ===== -->
+  <div class="main-content">
+
+    <!-- Top bar -->
+    <div class="top-bar">
+      <div class="nav-arrows">
+        <button onclick="history.back()"><i class="fa fa-chevron-left"></i></button>
+        <button onclick="history.forward()"><i class="fa fa-chevron-right"></i></button>
+      </div>
+      <div class="top-bar-right" style="margin-left:auto;">
+        <div class="user-menu" id="userMenuBtn">
+          <div class="user-avatar" id="userAvatarTop">U</div>
+          <span id="userNameTop">User</span>
+          <i class="fa fa-chevron-down"></i>
+          <div class="profile-dropdown" id="profileDropdown">
+            <a href="dashboard.html"><i class="fa fa-home"></i> Dashboard</a>
+            <hr>
+            <button id="logoutBtn"><i class="fa fa-sign-out-alt"></i> Log out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page body -->
+    <div class="page active" id="playlistPage">
+
+      <!-- Loading state -->
+      <div id="loadingState" style="padding:60px 24px;">
+        <div class="spinner"></div>
+      </div>
+
+      <!-- Playlist hero (hidden until loaded) -->
+      <div id="playlistContent" class="hidden">
+
+        <div class="playlist-hero" id="playlistHero">
+          <div class="playlist-hero-cover placeholder" id="playlistCover">🎵</div>
+          <div class="playlist-hero-info">
+            <div class="playlist-hero-type">Playlist</div>
+            <h1 class="playlist-hero-title" id="playlistName">Loading…</h1>
+            <p class="playlist-hero-meta" id="playlistMeta"></p>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="playlist-actions">
+          <button class="play-big-btn" id="playAllBtn"><i class="fa fa-play"></i></button>
+          <button class="ctrl-btn" id="shuffleBtn" title="Shuffle"><i class="fa fa-random"></i></button>
+          <button class="ctrl-btn" id="editBtn" title="Edit"><i class="fa fa-edit"></i></button>
+          <button class="ctrl-btn" id="deleteBtn" title="Delete" style="color:#e53e3e;"><i class="fa fa-trash"></i></button>
+        </div>
+
+        <!-- Song list -->
+        <div style="padding: 0 24px 80px;">
+          <table class="song-list" id="songTable">
+            <thead>
+              <tr>
+                <th style="width:40px;">#</th>
+                <th>Title</th>
+                <th>Artist</th>
+                <th style="text-align:right;"><i class="fa fa-clock"></i></th>
+                <th style="width:40px;"></th>
+              </tr>
+            </thead>
+            <tbody id="songBody"></tbody>
+          </table>
+
+          <div class="empty-state hidden" id="emptyState">
+            <i class="fa fa-music"></i>
+            <h3>This playlist is empty</h3>
+            <p>Go back to the dashboard and add songs</p>
+          </div>
+        </div>
+
+      </div><!-- end playlistContent -->
+
+    </div>
+
+  </div><!-- end main-content -->
+
+  <!-- ===== PLAYER BAR ===== -->
+  <footer class="player-bar">
+    <div class="player-now-playing">
+      <img class="player-cover" id="currentCover"
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='54' height='54'%3E%3Crect width='54' height='54' fill='%23282828'/%3E%3Ctext x='27' y='36' text-anchor='middle' font-size='28' fill='%23555'%3E%E2%99%AA%3C/text%3E%3C/svg%3E"
+        alt="cover">
+      <div class="player-song-info">
+        <div class="player-song-title" id="currentSong">Select a song</div>
+        <div class="player-song-artist" id="currentArtist">–</div>
+      </div>
+      <button class="player-heart" id="playerHeartBtn"><i class="far fa-heart"></i></button>
+    </div>
+
+    <div class="player-center">
+      <div class="player-controls">
+        <button class="ctrl-btn" id="shuffleBtn2"><i class="fa fa-random"></i></button>
+        <button class="ctrl-btn" id="prevBtn"><i class="fa fa-step-backward"></i></button>
+        <button class="ctrl-btn" id="playPauseBtn"><i class="fa fa-play"></i></button>
+        <button class="ctrl-btn" id="nextBtn"><i class="fa fa-step-forward"></i></button>
+        <button class="ctrl-btn" id="repeatBtn"><i class="fa fa-redo"></i></button>
+      </div>
+      <div class="player-progress">
+        <span class="time-label" id="currentTime">0:00</span>
+        <input type="range" id="progressBar" value="0" min="0" step="1">
+        <span class="time-label" id="totalTime">0:00</span>
+      </div>
+    </div>
+
+    <div class="player-right">
+      <div class="vol-ctrl">
+        <i class="fa fa-volume-up" id="volumeIcon"></i>
+        <input type="range" id="volumeSlider" value="100" min="0" max="100">
+      </div>
+    </div>
+  </footer>
+
+</div><!-- end app-shell -->
+
+<div id="toast-container"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/player.js"></script>
+<script>
+/* ---- Playlist page logic ---- */
+document.addEventListener("DOMContentLoaded", async () => {
+
+  if (!API.getToken()) { window.location.href = "index.html"; return; }
+
+  // Get playlist ID from URL ?id=xxx
+  const params = new URLSearchParams(window.location.search);
+  const playlistId = params.get("id");
+
+  if (!playlistId) { window.location.href = "dashboard.html"; return; }
+
+  // User info
+  try {
+    const data = await API.users.me();
+    const user = data.user || data.data || data;
+    const nameEl   = document.getElementById("userNameTop");
+    const avatarEl = document.getElementById("userAvatarTop");
+    if (nameEl)   nameEl.textContent   = user.username || "User";
+    if (avatarEl) avatarEl.textContent = (user.username || "U")[0].toUpperCase();
+  } catch {}
+
+  // Sidebar playlists
+  try {
+    const data = await API.playlists.mine();
+    const playlists = data.playlists || data.data || [];
+    const ul = document.getElementById("sidebarPlaylists");
+    if (ul) ul.innerHTML = playlists.map(p => `
+      <li class="playlist-item" onclick="window.location.href='playlist.html?id=${p._id}'"
+          style="${p._id === playlistId ? 'background:var(--bg-highlight);' : ''}">
+        <div style="width:40px;height:40px;border-radius:4px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">🎵</div>
+        <div class="playlist-info">
+          <div class="playlist-name">${esc(p.name)}</div>
+          <div class="playlist-meta">${p.songs?.length || 0} songs</div>
+        </div>
+      </li>`).join("");
+  } catch {}
+
+  // Load playlist
+  try {
+    const data = await API.playlists.getById(playlistId);
+    const pl = data.playlist || data.data || data;
+
+    document.title = `${pl.name} – MyTune`;
+    document.getElementById("playlistName").textContent = pl.name;
+    document.getElementById("playlistMeta").textContent =
+      `${pl.songs?.length || 0} songs · ${pl.visibility || "public"}`;
+
+    if (pl.coverImage) {
+      document.getElementById("playlistCover").innerHTML =
+        `<img src="${pl.coverImage}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">`;
+    }
+
+    const songs = pl.songs || [];
+    const body  = document.getElementById("songBody");
+
+    if (songs.length === 0) {
+      document.getElementById("songTable").classList.add("hidden");
+      document.getElementById("emptyState").classList.remove("hidden");
+    } else {
+      body.innerHTML = songs.map((s, i) => {
+        const id = s.id || s._id;
+        return `
+          <tr class="song-row" data-song-id="${id}" data-index="${i}" style="cursor:pointer;">
+            <td class="song-num">${i + 1}</td>
+            <td>
+              <div class="song-info-cell">
+                <img class="song-thumb"
+                  src="${s.cover || s.coverUrl || defaultCover()}"
+                  onerror="this.src='${defaultCover()}'" alt="">
+                <div>
+                  <div class="song-title-cell">${esc(s.title)}</div>
+                  <div class="song-artist-cell">${esc(s.artist?.name || s.artist || "")}</div>
+                </div>
+              </div>
+            </td>
+            <td class="song-artist-cell">${esc(s.artist?.name || s.artist || "–")}</td>
+            <td class="song-duration">${fmtDur(s.duration)}</td>
+            <td>
+              <button class="like-btn ${player.isLiked(id) ? "liked" : ""}" data-song-id="${id}">
+                <i class="${player.isLiked(id) ? "fas" : "far"} fa-heart"></i>
+              </button>
+            </td>
+          </tr>`;
+      }).join("");
+
+      const playerSongs = songs.map(s => ({
+        id:     s.id || s._id,
+        title:  s.title,
+        artist: s.artist?.name || s.artist || "Unknown",
+        url:    s.preview || s.audioFileUrl || s.url || "",
+        cover:  s.cover || s.coverUrl || defaultCover()
+      }));
+
+      // Row click → play
+      body.querySelectorAll(".song-row").forEach(row => {
+        row.addEventListener("click", e => {
+          if (e.target.closest(".like-btn")) return;
+          const idx = parseInt(row.dataset.index);
+          player.setQueue(playerSongs, idx);
+        });
+      });
+
+      // Like button
+      body.querySelectorAll(".like-btn").forEach(btn => {
+        btn.addEventListener("click", e => {
+          e.stopPropagation();
+          player.toggleLike(btn.dataset.songId);
+          const liked = player.isLiked(btn.dataset.songId);
+          btn.classList.toggle("liked", liked);
+          btn.innerHTML = `<i class="${liked ? "fas" : "far"} fa-heart"></i>`;
+        });
+      });
+
+      // Play all
+      document.getElementById("playAllBtn")?.addEventListener("click", () => {
+        player.setQueue(playerSongs, 0);
+      });
+
+      // Shuffle
+      document.getElementById("shuffleBtn")?.addEventListener("click", () => {
+        player.isShuffled = true;
+        player.setQueue(playerSongs, Math.floor(Math.random() * playerSongs.length));
+      });
+    }
+
+    // Delete
+    document.getElementById("deleteBtn")?.addEventListener("click", async () => {
+      if (!confirm(`Delete playlist "${pl.name}"?`)) return;
+      try {
+        await API.playlists.delete(playlistId);
+        showToast("Playlist deleted", "success");
+        setTimeout(() => window.location.href = "dashboard.html", 800);
+      } catch (e) { showToast(e.message, "error"); }
+    });
+
+    document.getElementById("loadingState").classList.add("hidden");
+    document.getElementById("playlistContent").classList.remove("hidden");
+
+  } catch (err) {
+    document.getElementById("loadingState").innerHTML =
+      `<div class="empty-state"><i class="fa fa-exclamation-circle"></i><h3>Failed to load playlist</h3><p>${err.message}</p><a href="dashboard.html" class="btn-primary" style="display:inline-block;margin-top:16px;padding:10px 24px;border-radius:30px;">Go Home</a></div>`;
+  }
+
+  // User menu dropdown
+  document.getElementById("userMenuBtn")?.addEventListener("click", e => {
+    e.stopPropagation();
+    document.getElementById("profileDropdown")?.classList.toggle("open");
+  });
+  document.addEventListener("click", () => {
+    document.getElementById("profileDropdown")?.classList.remove("open");
+  });
+
+  document.getElementById("logoutBtn")?.addEventListener("click", () => {
+    localStorage.clear();
+    window.location.href = "index.html";
+  });
+
+});
+
+function esc(str) {
+  return String(str || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function fmtDur(s) {
+  if (!s) return "–";
+  const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+  return `${m}:${sec < 10 ? "0" : ""}${sec}`;
+}
+function defaultCover() {
+  return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect width='200' height='200' fill='%23282828'/%3E%3Ctext x='100' y='120' text-anchor='middle' font-size='60' fill='%23555'%3E%E2%99%AA%3C/text%3E%3C/svg%3E";
+}
+</script>
+</body>
+</html>
