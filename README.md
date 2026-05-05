@@ -4,4 +4,4 @@ The platform organizes songs based on user moods, making music discovery more pe
 
 A unique feature, MyTune, empowers talented singers to showcase their skills by uploading their own performances. It serves as an easy platform for emerging artists to create profiles and reach a wider audience.
 
-Built using modern web technologies like HTML, CSS, React.js, and Node.js, with MongoDB as the database, Music Tune integrates external APIs to enhance functionality and deliver a smooth user experience.
+Built using modern web technologies like HTML, CSS, React.js, and Node.js, with MongoDB as the database, Music Tune integrates external APIs to enhance functionality and deliver a smooth user experience
